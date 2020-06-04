@@ -1,6 +1,7 @@
 import sys
 from room import Room
-from player import Player
+from player import Player, Interact
+from item import Item
 
 # Declare all the rooms
 
@@ -35,17 +36,34 @@ room['narrow'].w_to = room['foyer']
 room['narrow'].n_to = room['treasure']
 room['treasure'].s_to = room['narrow']
 
+
+# Creating Items
+items = {
+    'sword': Item("Sword", "a dull, rusty sword"),
+    'rope': Item("Rope", "a strong coil of rope"),
+    'coin': Item("Coin", "a lost coin, dropped by looting adventurers")
+}
+
+# Adding items to room
+room['outside'].add_items(items['sword'])
+room['overlook'].add_items(items['rope'])
+room['treasure'].add_items(items['coin'])
+
+
 # Main
 
 # Make a new player object that is currently in the 'outside' room.
 player = Player(room["outside"])
-print(player.currentRoom.description)
 
 currentRoom = player.currentRoom
-#print(f"Current Room: {currentRoom}")
+print(currentRoom)
 
-#currentDescription = room[currentRoom].description
-#print(f"Current Description: {currentDescription}")
+roomItems = currentRoom.items_in_room
+print(roomItems)
+#items["sword"]
+
+#playerInventory = Interact().inventory
+#print(playerInventory)
 
 print("Welcome to The Game. Read the instructions and have fun!\n")
 print("Instructions: Read the prompts, then pick a direction.\nWhen inputing a direction, use 'w' for North, 'd' for East, 's' for South, and 'a' for West.\nYou can type 'q' to quit the game at anytime.\n")
@@ -58,15 +76,26 @@ direction = None
 # * Prints the current description (the textwrap module might be useful here).
 # * Waits for user input and decides what to do.
 
-while game_on is True:
-    print(f"\nLocation: {currentRoom.name}")
-    print(currentRoom.description)
-    direction = input("\nWhich direction would you like to go?: ")
-    direction = direction.lower()
-
 # If the user enters a cardinal direction, attempt to move to the room there. (w = north, d = east, s = south, a = west)
 # Print an error message if the movement isn't allowed.
 # If the user enters "q", quit the game.
+
+
+while game_on is True:
+    print(f"\nLocation: {currentRoom.name}")
+    print(currentRoom.description)
+
+    if currentRoom.name == "Outside Cave Entrance":
+        print(items["sword"])
+
+    if currentRoom.name == "Grand Overlook":
+        print(items["rope"])
+
+    if currentRoom.name == "Treasure Chamber":
+        print(items["coin"])
+
+    direction = input("\nWhich direction would you like to go?: ")
+    direction = direction.lower()
 
     if direction == 'w':
         if currentRoom.n_to is None:
@@ -77,7 +106,6 @@ while game_on is True:
     if direction == 'd':
         if currentRoom.e_to is None:
             print("\nInvalid direction. Please try again")
-            
         else:
             currentRoom = currentRoom.e_to
             
@@ -85,24 +113,35 @@ while game_on is True:
     if direction == 's':
         if currentRoom.s_to is None:
             print("\nInvalid direction. Please try again")
-            
         else:
             currentRoom = currentRoom.s_to
             
 
     if direction == 'a':
-        if room[currentRoom].w_to is None:
+        if currentRoom.w_to is None:
             print("\nInvalid direction. Please try again")
-            
         else:
-            currentRoom = currentRoom.n_to
+            currentRoom = currentRoom.w_to
             
-
     if direction == 'q':
         print("Thanks for playing!")
         sys.exit()
 
-    else:
-        print("That's not a direction. Try inputing 'w' for North, 'd' for East, 's' for South, and 'a' for West")
+    #else:
+    #    print("That's not a direction. Try inputing 'w' for North, 'd' for East, 's' for South, and 'a' for West")
 
 
+#if currentRoom.name == "Outside Cave Entrance":
+#    print(items["sword"])
+#else:
+#    print("No items are nearby")
+#
+#if currentRoom.name == "Grand Overlook":
+#    print(items["rope"])
+#else:
+#    print("No items are nearby")
+#
+#if currentRoom.name == "Treasure Chamber":
+#    print(items["coin"])
+#else:
+#    print("No items are nearby")
